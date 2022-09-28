@@ -25,23 +25,34 @@ async function main() {
 
   app.post("/post",async(req,res)=>{
     const data = req.body
-    const details = data[0]
-    const id = data[1]
-    const find = await User.findOne({userId:id})
+   for(let y = 0;y<data[0].length;y++){
+    const array = data[0][y]
+      const {PartyCode} = array
+      delete array.PartyCode
+      console.log(array)
+  
+    const find = await User.findOne({PartyCode})
     if(find){
         console.log("if")
-        for(let x = 0; x<details.length;x++){
-            const user = await User.findOneAndUpdate({userId:id},{$push:{tradeDatails:details[x]}},{ new: true })
-        }
+            const user = await User.findOneAndUpdate({PartyCode},{$push:{tradeDatails:array}},{ new: true })
     }else{
      
-        const user = new User({userId:id})
+        const user = new User({PartyCode})
         await user.save()
         console.log("else")
-        for(let x = 0; x<details.length;x++){
-            const user = await User.findOneAndUpdate({userId:id},{$push:{tradeDatails:details[x]}},{ new: true })
-        }
+  
+            const user1 = await User.findOneAndUpdate({PartyCode},{$push:{tradeDatails:array}},{ new: true })
+       
     }
+  }
+  })
+
+  app.get("/login",(req,res)=>{
+    res.render("login.ejs")
+  })
+
+  app.get("/register",(req,res)=>{
+    res.render("register.ejs")
   })
 
   app.listen(4000,()=>{

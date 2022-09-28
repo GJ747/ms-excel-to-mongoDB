@@ -2,9 +2,9 @@ const mongoose = require('mongoose');
 
 const UserDetails = new mongoose.Schema({
 
-    userId : String,
+    PartyCode : String,
+    password : String,
     tradeDatails:[{
-        PartyCode : String,
         EXCHANGE : String,
         'Trade Date' : String,
         'Scrip CD' : String,

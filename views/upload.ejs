@@ -1,24 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Document</title>
-    <script
-      type="text/javascript"
-      src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.3/xlsx.full.min.js"
-    ></script>
-    <script src="/axios.min.js"></script>
-    <link rel="stylesheet" href="/bootstrap.min.css">
-    <link rel="stylesheet" href="/app.css">
-  </head>
+<%- include("./header.ejs") %> 
 
   <body>
     <div class="container mt-5" >
       <div id="main">
-        <label >User ID</label>
-        <input class="form-control" type="text" id="userId">
         <label for="fileUpload">Upload File</label>
         <input class="form-control" type="file" id="fileUpload" accept=".xls,.xlsx" /><br />
         <button class="btn btn-secondary btn-lg" type="button" id="uploadExcel">Submit</button>
@@ -56,15 +40,12 @@
                 workbook.Sheets[sheet]
               );
               let jsonObject = JSON.stringify(rowObject);
-            //   document.getElementById("jsonData").innerHTML = jsonObject;
               console.log(jsonObject);
 
               axios({
                         method: 'post',
                         url: '/post',
-                        data: [rowObject,
-                                document.getElementById("userId").value
-                            ]
+                        data: [rowObject]
                     });
             });
           };
