@@ -1,0 +1,24 @@
+body{
+    background-color: #ece6ed;
+}
+
+#main{
+    background-color: white;
+    margin: auto;
+    width: 400px;
+    padding: 15px;
+    box-shadow: 1px 1px 6px black;
+    border: solid 2px #d1c1d4
+}
+
+#popup{
+    color: #55325c;
+    width: 250px;
+    height: 150px;
+    position: fixed;
+    border: solid 2px #d1c1d4;
+    left: 43%;
+    z-index: 1;
+    background-color: white;
+    box-shadow: 1px 1px 6px black;
+}
