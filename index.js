@@ -13,15 +13,33 @@ async function main() {
   }
   
   
-  app.use(bodyParser.urlencoded({ extended: false })); 
+  app.use(bodyParser.urlencoded({ extended: true })); 
   app.use(bodyParser.json());
   
   app.set('view engine', 'ejs');
   app.use(express.static('public'));
 
+//----------------- Auth --------------------
+
   app.get("/",(req,res)=>{
-    res.render("upload.ejs")
+    res.render("login.ejs",{error:"none"})
   })
+
+
+  app.post("/login",(req,res)=>{
+    const {userId,password} = req.body
+    if(userId === "admin" && password === "admin"){
+      res.render("upload.ejs")
+    }else{
+      res.render("login.ejs",{error:"block"})
+    }
+  })
+
+//------------ Upload xlxs --------------
+
+app.get("/upload",(req,res)=>{
+  res.render("upload.ejs")
+})
 
   app.post("/post",async(req,res)=>{
     const data = req.body
@@ -47,14 +65,31 @@ async function main() {
   }
   })
 
-  app.get("/login",(req,res)=>{
-    res.render("login.ejs")
-  })
+ //------------- Registration -------------
 
   app.get("/register",(req,res)=>{
     res.render("register.ejs")
   })
 
+  app.post("/register",async(req,res)=>{
+    const newUser = new User(req.body)
+    await newUser.save()
+  })
+
+//--------------User Details send API ----------
+
+app.get("/api",async(req,res)=>{
+  const {PartyCode} = req.query
+  const tradData = await User.findOne({PartyCode})
+  if(tradData){
+  console.log(tradData.tradeDatails)
+  res.json(tradData.tradeDatails)
+  }else{
+    res.json("User Not Find")
+  }
+})
+
+//----------- SERVER ------------------
   app.listen(4000,()=>{
     console.log("Server Started")
   })

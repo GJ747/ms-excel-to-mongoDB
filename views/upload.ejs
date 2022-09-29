@@ -1,7 +1,9 @@
 <%- include("./header.ejs") %> 
 
   <body>
-    <div class="container mt-5" >
+    <div class="container " >
+      <%- include("./topBar.ejs") %> 
+
       <div id="main">
         <label for="fileUpload">Upload File</label>
         <input class="form-control" type="file" id="fileUpload" accept=".xls,.xlsx" /><br />

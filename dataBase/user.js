@@ -1,9 +1,13 @@
 const mongoose = require('mongoose');
 
 const UserDetails = new mongoose.Schema({
-
-    PartyCode : String,
+    userName : String,
+    PartyCode : {type :String, unique : true},
     password : String,
+    email : String,
+    mobileNo : String,
+    dateOfBirth : String,
+    panNo : String,
     tradeDatails:[{
         EXCHANGE : String,
         'Trade Date' : String,
