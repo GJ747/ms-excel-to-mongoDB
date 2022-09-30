@@ -3,7 +3,7 @@ const app = express();
 const mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 const User = require("./dataBase/user");
-const { findOne } = require("./dataBase/user");
+const { findOne, findOneAndUpdate } = require("./dataBase/user");
 
 main().catch(err => console.log(err));
 
@@ -88,7 +88,42 @@ app.get("/api",async(req,res)=>{
     res.json("User Not Find")
   }
 })
+//------------Change Password-------------
 
+
+app.get("/changePassword",(req,res)=>{
+  res.render("changePassword.ejs",{error:"none"})
+})
+
+app.post("/changePassword",async(req,res)=>{
+  const{PartyCode,prePassword,newPassword}= req.body
+  const user = await User.findOne({PartyCode})
+  if(prePassword === user.password){
+    console.log("if")
+    const user1 = await User.findOneAndUpdate({PartyCode},{$set:{password :newPassword}},{ new: true })
+    res.render("changePassword.ejs",{error:"none"})
+  }else{
+    console.log("else")
+    res.render("changePassword.ejs",{error:"block"})
+  }
+})
+
+app.get("/change_Password",async(req,res)=>{
+  const{PartyCode,prePassword,newPassword}= req.query
+  const user = await User.findOne({PartyCode})
+  if(user){
+      if(prePassword === user.password){
+        console.log("if")
+        const user1 = await User.findOneAndUpdate({PartyCode},{$set:{password :newPassword}},{ new: true })
+        res.json("Password Changed Succesfull")
+      }else{
+        console.log("else")
+        res.json("Previous Password is wrong")
+      }
+  }else{
+    res.json("User Id not found")
+  }
+})
 //----------- SERVER ------------------
   app.listen(4000,()=>{
     console.log("Server Started")
