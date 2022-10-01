@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 const User = require("./dataBase/user");
 const { findOne, findOneAndUpdate } = require("./dataBase/user");
+const user = require("./dataBase/user");
 
 main().catch(err => console.log(err));
 
@@ -41,39 +42,42 @@ app.get("/upload",(req,res)=>{
   res.render("upload.ejs")
 })
 
-  app.post("/post",async(req,res)=>{
+  app.post("/upload",async(req,res)=>{
     const data = req.body
    for(let y = 0;y<data[0].length;y++){
-    const array = data[0][y]
-      const {PartyCode} = array
-      delete array.PartyCode
-      console.log(array)
-  
-    const find = await User.findOne({PartyCode})
-    if(find){
-        console.log("if")
-            const user = await User.findOneAndUpdate({PartyCode},{$push:{tradeDatails:array}},{ new: true })
-    }else{
-     
-        const user = new User({PartyCode})
-        await user.save()
-        console.log("else")
-  
-            const user1 = await User.findOneAndUpdate({PartyCode},{$push:{tradeDatails:array}},{ new: true })
-       
-    }
+            const array = data[0][y]
+              const {PartyCode} = array
+              delete array.PartyCode
+              console.log(array)
+          
+            const find = await User.findOne({PartyCode})
+            if(find){
+                console.log("if")
+                    const user = await User.findOneAndUpdate({PartyCode},{$push:{tradeDatails:array}},{ new: true })
+            }else{
+                const data = {PartyCode , password :PartyCode, firstLogin : 0}
+                const user = new User(data)
+                await user.save()
+                console.log("else")
+          
+                    const user1 = await User.findOneAndUpdate({PartyCode},{$push:{tradeDatails:array}},{ new: true })
+              
+            }
   }
   })
 
  //------------- Registration -------------
 
   app.get("/register",(req,res)=>{
-    res.render("register.ejs")
+    res.render("register.ejs",{popup:"none"})
   })
 
   app.post("/register",async(req,res)=>{
-    const newUser = new User(req.body)
+    const data = req.body
+    data.firstLogin = 0
+    const newUser = new User(data)
     await newUser.save()
+    res.render("register.ejs",{popup:"block"})
   })
 
 //--------------User Details send API ----------
@@ -122,6 +126,18 @@ app.get("/change_Password",async(req,res)=>{
       }
   }else{
     res.json("User Id not found")
+  }
+})
+
+//----------logIn API -------------
+app.post("/login-api",async(req,res)=>{
+  const {partyCode,password} = req.body
+  const user = await User.findOne({partyCode})
+  if(partyCode === user.PartyCode && password === user.password){
+  const data = { partyCode : user.PartyCode, flg:user.firstLogin}
+  res.json(data)
+  }else{
+    res.json("wrong credentials")
   }
 })
 //----------- SERVER ------------------

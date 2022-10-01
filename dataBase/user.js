@@ -8,6 +8,7 @@ const UserDetails = new mongoose.Schema({
     mobileNo : String,
     dateOfBirth : String,
     panNo : String,
+    firstLogin : String,
     tradeDatails:[{
         EXCHANGE : String,
         'Trade Date' : String,

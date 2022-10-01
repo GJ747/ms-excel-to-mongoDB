@@ -2,6 +2,10 @@
 <body>
     <div class="container">
         <%- include("./topBar.ejs") %>
+        <div id="popup">
+            <p style="text-align: center;margin-top: 10%;">Information Saved Successfully</p>
+            <button id="btn" class="btn btn-secondary" onclick="reload()" style="position: relative;left: 40%;margin-top: 8%;">Close</button>
+        </div>
         <div id="main" class="mt-5">
         <form action="/register" method="post">
             <label >User Name</label>
@@ -23,4 +27,10 @@
         </div>
     </div>
 </body>
+<script>
+    document.getElementById("popup").style.display = "<%=popup%>"
+    const reload=()=>{
+        document.getElementById("popup").style.display = "none"
+    }
+</script>
 </html>
