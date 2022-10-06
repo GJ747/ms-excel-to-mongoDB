@@ -44,6 +44,8 @@ app.get("/upload",(req,res)=>{
 
   app.post("/upload",async(req,res)=>{
     const data = req.body
+
+    if(data[1]==="trading"){
    for(let y = 0;y<data[0].length;y++){
             const array = data[0][y]
               const {PartyCode} = array
@@ -63,7 +65,34 @@ app.get("/upload",(req,res)=>{
                     const user1 = await User.findOneAndUpdate({PartyCode},{$push:{tradeDatails:array}},{ new: true })
               
             }
-  }
+  }}
+
+
+  if(data[1]==="userDetails"){
+    for(let y = 0;y<data[0].length;y++){
+             const array = data[0][y]
+               console.log("userDetails")
+               console.log(array)
+           
+             const find = await User.findOne({PartyCode:array.PartyCode})
+             if(find){
+                 console.log(find)
+                     
+             }else{
+                 const data = {
+                  PartyCode : array.PartyCode, 
+                  userName : array.PartyName,
+                  password :array.PartyCode, 
+                  firstLogin : 0
+                }
+                 const user = new User(data)
+                 await user.save()
+                 console.log("else")
+                
+             }
+   }}
+ 
+   res.json("ok")
   })
 
  //------------- Registration -------------
@@ -112,13 +141,13 @@ app.post("/changePassword",async(req,res)=>{
   }
 })
 
-app.get("/change_Password",async(req,res)=>{
-  const{PartyCode,prePassword,newPassword}= req.query
+app.post("/change_Password",async(req,res)=>{
+  const{PartyCode,prePassword,newPassword}= req.body
   const user = await User.findOne({PartyCode})
   if(user){
       if(prePassword === user.password){
         console.log("if")
-        const user1 = await User.findOneAndUpdate({PartyCode},{$set:{password :newPassword}},{ new: true })
+        const user1 = await User.findOneAndUpdate({PartyCode},{$set:{password :newPassword,firstLogin: 1}},{ new: true })
         res.json("Password Changed Succesfull")
       }else{
         console.log("else")
@@ -133,12 +162,16 @@ app.get("/change_Password",async(req,res)=>{
 app.post("/login-api",async(req,res)=>{
   const {partyCode,password} = req.body
   const user = await User.findOne({partyCode})
-  if(partyCode === user.PartyCode && password === user.password){
-  const data = { partyCode : user.PartyCode, flg:user.firstLogin}
-  res.json(data)
+  if(user){
+      if(partyCode === user.PartyCode && password === user.password){
+      const data = { partyCode : user.PartyCode, flg:user.firstLogin}
+      res.json(data)
+      }else{
+        res.json("wrong credentials")
+      }
   }else{
-    res.json("wrong credentials")
-  }
+  res.json("Data not found")
+}
 })
 //----------- SERVER ------------------
   app.listen(4000,()=>{

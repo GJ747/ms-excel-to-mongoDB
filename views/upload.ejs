@@ -5,9 +5,17 @@
       <%- include("./topBar.ejs") %> 
 
       <div id="main">
-        <label for="fileUpload">Upload File</label>
+        <label for="fileUpload">Upload Trading File </label>
         <input class="form-control" type="file" id="fileUpload" accept=".xls,.xlsx" /><br />
         <button class="btn btn-secondary btn-lg" type="button" id="uploadExcel">Submit</button>
+        <pre id="jsonData"></pre>
+        
+      </div>
+
+      <div id="main">
+        <label for="fileUpload">Upload User Deatails</label>
+        <input class="form-control" type="file" id="fileUpload1" accept=".xls,.xlsx" /><br />
+        <button class="btn btn-secondary btn-lg" type="button" id="uploadExcel1">Submit</button>
         <pre id="jsonData"></pre>
         
       </div>
@@ -21,6 +29,7 @@
     document.getElementById("popup").style.display = "none"
 
     var selectedFile;
+    var selectedFile1;
     document
       .getElementById("fileUpload")
       .addEventListener("change", function(event) {
@@ -29,6 +38,7 @@
     document
       .getElementById("uploadExcel")
       .addEventListener("click", function() {
+        document.getElementById("uploadExcel").disabled = true;
         if (selectedFile) {
           console.log("hi");
           var fileReader = new FileReader();
@@ -48,12 +58,60 @@
               axios({
                         method: 'post',
                         url: '/upload',
-                        data: [rowObject]
-                    });
+                        data: [rowObject,"trading"]
+                    }).then((res)=>{
+                        console.log("res",res)
+                        if(res.data === "ok"){
+                          document.getElementById("popup").style.display = "block"
+                        }
+                    })
             });
           };
           fileReader.readAsBinaryString(selectedFile);
           document.getElementById("popup").style.display = "block"
+        }
+      });
+
+
+      document
+      .getElementById("fileUpload1")
+      .addEventListener("change", function(event) {
+        selectedFile1 = event.target.files[0];
+      });
+    document
+      .getElementById("uploadExcel1")
+      .addEventListener("click", function() {
+        document.getElementById("uploadExcel1").disabled = true;
+        if (selectedFile1) {
+          console.log("hi");
+          var fileReader = new FileReader();
+          fileReader.onload = function(event) {
+            var data = event.target.result;
+
+            var workbook = XLSX.read(data, {
+              type: "binary"
+            });
+            workbook.SheetNames.forEach(sheet => {
+              let rowObject = XLSX.utils.sheet_to_row_object_array(
+                workbook.Sheets[sheet]
+              );
+              let jsonObject = JSON.stringify(rowObject);
+              console.log(jsonObject);
+
+              axios({
+                        method: 'post',
+                        url: '/upload',
+                        data: [rowObject,"userDetails"]
+                    }).then((res)=>{
+                        console.log("res",res)
+                        if(res.data === "ok"){
+                          document.getElementById("popup").style.display = "block"
+                        }
+                    })
+            });
+          };
+          fileReader.readAsBinaryString(selectedFile1);
+          
         }
       });
 

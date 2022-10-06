@@ -19,6 +19,7 @@ body{
     position: fixed;
     border: solid 2px #d1c1d4;
     left: 43%;
+    top : 20%;
     z-index: 1;
     background-color: white;
     box-shadow: 1px 1px 6px black;
